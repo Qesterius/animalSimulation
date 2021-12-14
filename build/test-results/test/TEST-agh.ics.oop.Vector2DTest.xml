@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="agh.ics.oop.Vector2DTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-10-27T18:01:35" hostname="DESKTOP-JPRMV2P" time="0.04">
+  <properties/>
+  <testcase name="main()" classname="agh.ics.oop.Vector2DTest" time="0.04"/>
+  <system-out><![CDATA[--------------tostr (12,43)
+upperRight 0,0(12,43)
+lowerLeft 0,0(0,0)
+add 2,2(14,45)
+subtract 2,2(10,41)
+precedes 2,2false
+follows 2,2true
+opposite (-12,-43)
+equals same true
+equals notsame false
+--------------tostr (-2,1)
+upperRight 0,0(0,1)
+lowerLeft 0,0(-2,0)
+add 2,2(0,3)
+subtract 2,2(4,1)
+precedes 2,2true
+follows 2,2false
+opposite (2,-1)
+equals same true
+equals notsame false
+--------------tostr (6352,-4)
+upperRight 0,0(6352,0)
+lowerLeft 0,0(0,-4)
+add 2,2(6354,-2)
+subtract 2,2(6350,6)
+precedes 2,2false
+follows 2,2false
+opposite (-6352,4)
+equals same true
+equals notsame false
+--------------tostr (0,3)
+upperRight 0,0(0,3)
+lowerLeft 0,0(0,0)
+add 2,2(2,5)
+subtract 2,2(2,1)
+precedes 2,2false
+follows 2,2false
+opposite (0,-3)
+equals same true
+equals notsame false
+--------------tostr (0,-1003)
+upperRight 0,0(0,0)
+lowerLeft 0,0(0,-1003)
+add 2,2(2,-1001)
+subtract 2,2(2,1005)
+precedes 2,2true
+follows 2,2false
+opposite (0,1003)
+equals same true
+equals notsame false
+--------------tostr (0,0)
+upperRight 0,0(0,0)
+lowerLeft 0,0(0,0)
+add 2,2(2,2)
+subtract 2,2(2,2)
+precedes 2,2true
+follows 2,2false
+opposite (0,0)
+equals same true
+equals notsame false
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
