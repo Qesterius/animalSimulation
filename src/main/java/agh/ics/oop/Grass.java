@@ -1,0 +1,47 @@
+package agh.ics.oop;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Grass implements IMapElement{
+    Vector2d position;
+    private List<IPositionChangeObserver> observers = new ArrayList<IPositionChangeObserver>();
+
+    public Grass(Vector2d pos){ position = pos;}
+
+    public Vector2d getPosition() {
+        return new Vector2d(position);
+    }
+
+    public void cut()
+    {
+        for (IPositionChangeObserver o: observers) {
+            o.positionChanged(position,null, this);
+        }
+
+    }
+    @Override
+    public boolean isAt(Vector2d pos) {
+        return pos.equals(position);
+    }
+
+    @Override
+    public String getFilename() {
+        return "grass";
+    }
+
+    @Override
+    public String toString() {
+        return "*";
+    }
+
+
+
+    public void addObserver(IPositionChangeObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(IPositionChangeObserver observer) {
+        observers.remove(observer);
+    }
+}
