@@ -3,7 +3,7 @@ package agh.ics.oop;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Animal implements IMapElement {
+public class Animal implements IMapElement{//, Comparable<IMapElement> {
     private Vector2d position;
     private MapDirection orientation;
     private IWorldMap myMap;
@@ -105,4 +105,16 @@ public class Animal implements IMapElement {
         }
 
     }
+    public Integer getEnergy(){ return energy;}
+
+/*
+    @Override
+    public int compareTo(IMapElement o) {
+        if( o.getClass() == Grass.class)
+            return 1;
+        else if(o.getClass() == Animal.class)
+            return Integer.compare(this.energy,((Animal) o).energy);
+
+        return 0;
+    }*/
 }

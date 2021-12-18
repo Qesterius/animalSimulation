@@ -1,15 +1,11 @@
 package agh.ics.oop;
 
-import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SimulationEngine implements IEngine, Runnable, IPositionChangeObserver {
-    private final MoveDirection[] directions;
-    private final IWorldMap map;
+    private final MoveDirection[] directions=null;
+    private final IWorldMap map=null;
     private final ArrayList<Animal> animals = new ArrayList<Animal>();
     private int moveDelay =300;
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -20,7 +16,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
 
     public SimulationEngine(MoveDirection[] directions, IWorldMap map, Vector2d[] initPositions)
     {
-        this.directions = directions;
+        /*this.directions = directions;
         this.map =map;
         for (Vector2d init:initPositions) {
             Animal i_animal = new Animal( this.map, init );
@@ -28,7 +24,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
                 animals.add(i_animal);
                 i_animal.addObserver(this);
             }
-        }
+        }*/
     }
     public void interrupt(){
         running.set(false);

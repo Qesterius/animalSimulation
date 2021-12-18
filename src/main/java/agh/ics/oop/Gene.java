@@ -1,10 +1,36 @@
 package agh.ics.oop;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class Gene {
     private ArrayList<MoveDirection> geneCode;
     private Random rand;
+
+    public Gene() //random gene generation
+    {
+        rand = new Random();
+        List<Integer> endsOfGini = new ArrayList<>();
+        for(int i=0;i<8;i++){
+            endsOfGini.add(rand.nextInt(32));
+        }
+        Collections.sort(endsOfGini);
+
+        geneCode = new ArrayList<>();
+        for(int i=0;i<8;i++)
+        {
+            int breakpoint = endsOfGini.get(0);
+            while(geneCode.size()<breakpoint){
+                geneCode.add(MoveDirection.BACKWARD.createDir(i));
+            }
+
+        }
+
+
+
+    }
 
     public Gene(MoveDirection[] tab)
     {

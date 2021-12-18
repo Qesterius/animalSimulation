@@ -5,49 +5,47 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
-    //protected List<Animal> animals = new ArrayList<>();
 
     protected Map<Vector2d, ArrayList<IMapElement>> objectsOnMap = new LinkedHashMap<>();
     protected Vector2d BorderNE;
     protected Vector2d BorderSW;
     final private MapVisualizer visualizer; // to pole może być finalne i prywatne
 
-    public AbstractWorldMap() {
+    public AbstractWorldMap() {//??
         visualizer = new MapVisualizer(this);
     }
 
-    void addToMap(Vector2d key, IMapElement e){
+    void addToMap(Vector2d key, IMapElement e){//g
         if(!objectsOnMap.containsKey(key))
             objectsOnMap.put(key, new ArrayList<>());
 
         objectsOnMap.get(key).add(e);
     }
-    void removeFromMap(Vector2d key, IMapElement e )
+    void removeFromMap(Vector2d key, IMapElement e )//g
     {
         objectsOnMap.get(key).remove(e);
         if(objectsOnMap.get(key).size() == 0)
             objectsOnMap.remove(key);
     }
 
-    public boolean place(Animal animal) {
+    public void place(Animal animal) {//g
         if (isPositionWithinMapBorders(animal.getPosition())) {
             animal.addObserver(this);
             addToMap(animal.getPosition(), animal);
-            return true;
         }
         throw new IllegalArgumentException(animal.getPosition() + " is illegal starting point for animal");
     }
 
-    public boolean isPositionWithinMapBorders(Vector2d pos){
+    public boolean isPositionWithinMapBorders(Vector2d pos){//g
         return pos.lowerLeft(BorderNE).equals(pos)
                 && pos.upperRight(BorderSW).equals(pos);
     }
 
-    public Vector2d processPossibleMove(Vector2d from,Vector2d to) {
+    public Vector2d processPossibleMove(Vector2d from,Vector2d to) {//g
         return isPositionWithinMapBorders(to) ? from : to;
     }
 
-    public boolean isOccupied(Vector2d position) {
+    public boolean isOccupied(Vector2d position) {//?
 
         /*for (Map.Entry<Vector2d, ArrayList<Animal>> x : animals.entrySet()) {
             for ( Animal y: x.getValue()) {

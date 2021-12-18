@@ -3,7 +3,7 @@ package agh.ics.oop;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Grass implements IMapElement{
+public class Grass implements IMapElement{//, Comparable<IMapElement>{
     Vector2d position;
     private List<IPositionChangeObserver> observers = new ArrayList<IPositionChangeObserver>();
 
@@ -44,4 +44,13 @@ public class Grass implements IMapElement{
     public void removeObserver(IPositionChangeObserver observer) {
         observers.remove(observer);
     }
+/*
+    @Override
+    public int compareTo(IMapElement o) {
+        if (o.getClass() == Animal.class)
+            return -1;
+
+        return 0;
+    }*/
+
 }

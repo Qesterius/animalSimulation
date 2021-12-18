@@ -1,17 +1,18 @@
 package agh.ics.oop.gui;
 
-import agh.ics.oop.*;
+import agh.ics.oop.AbstractWorldMap;
+import agh.ics.oop.IMapElement;
+import agh.ics.oop.IPositionChangeObserver;
+import agh.ics.oop.Vector2d;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.HPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import java.io.FileNotFoundException;
 
 public class App extends Application implements IPositionChangeObserver {
     AbstractWorldMap map;
@@ -91,7 +92,7 @@ public class App extends Application implements IPositionChangeObserver {
 
 
     void drawMap()
-    {
+    {/*
         gridPane.setGridLinesVisible(true);
         gridPane.getChildren().clear();
         gridPane.setGridLinesVisible(true);
@@ -145,7 +146,7 @@ public class App extends Application implements IPositionChangeObserver {
             }
         }
         gridPane.setGridLinesVisible(true);
-
+        */
     }
 
     @Override
@@ -159,7 +160,7 @@ public class App extends Application implements IPositionChangeObserver {
     }
 
     void startThread(String[] args) throws IllegalArgumentException{
-        if(engineThread != null)
+        /*if(engineThread != null)
             engineThread.interrupt();
         MoveDirection[] directions1;
         try {
@@ -177,6 +178,6 @@ public class App extends Application implements IPositionChangeObserver {
         SimulationEngine engine1 = new SimulationEngine(directions1, map1, positions1);
         engine1.addListener(this);
         engineThread = new Thread(engine1);
-        engineThread.start();
+        engineThread.start();*/
     }
 }

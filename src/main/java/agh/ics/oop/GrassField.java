@@ -5,66 +5,37 @@ import java.util.*;
 public class GrassField extends AbstractWorldMap{
     protected ArrayList<Vector2d> emptyMapSlots = new ArrayList<>();
     private Random random = new Random();   // to nie może być prywatne?
-    private Map<Vector2d,Grass> grasses = new LinkedHashMap();   // to nie ma prawa być publiczne
     private int plantRegion;    // to nie może być prywatne?
 
 
     public GrassField(int width, int height, double jungleRatio)
     {
         super();
-
-        //(0,0)  -> (sqrt(n*10), sqrt(n*10))
-        plantRegion = (int)Math.sqrt(grassQuantity*10);
-        BorderNE = new Vector2d(width, height);
+        BorderNE = new Vector2d(width-1, height-1);
         BorderSW = new Vector2d(0, 0);
-        plantGrasses(grassQuantity);
+
+        for(int x=BorderSW.x; x<=BorderNE.x;x++)
+            for(int y= BorderSW.y;y<=BorderNE.y;y++)
+                emptyMapSlots.add(new Vector2d(x,y));
     }
+
+
     private void plantGrasses(int grassQuantity)
     {
-        int success = 0;
-        while(success<grassQuantity)
-        {
-            Vector2d rand = new Vector2d(random.ints(0,plantRegion).findAny().getAsInt(), random.ints(0,plantRegion).findAny().getAsInt());
-            if(place(new Grass(rand))){  success++;}
-        }
+    //toworkm
     }
 
-    @Override
-    public boolean canMoveTo(Vector2d position) {
-        if( isOccupied(position) )
-        {
-            if(objectAt(position).getClass() == Grass.class)
-                return true;
-            return false;
-        }
-        return true;
+
+    private void place(Grass grass) {//g
+            addToMap(grass.getPosition(),grass);
     }
 
-    public boolean place(Grass grass) { // czy public?
-        if(!isOccupied(grass.position))
-        {
-            grasses.put(grass.getPosition(),grass);
-            //grass.addObserver(mapBoundary);
-            //mapBoundary.add(grass);
-            return true;
-        }
-
-
-        return false;
-    }
-    public boolean place(Animal animal)
+    /*public void place(Animal animal)
     {
-        boolean placed = super.place(animal);
-        if( placed )
-        {
-            //animal.addObserver(mapBoundary);
-            //mapBoundary.add(animal);
-            cutGrass(animal.getPosition());
-        }
-        return placed;
-    }
+        addToMap(animal.getPosition(),animal);
+    }*///w abstrakcie jest wysstarczajaco napisane
 
-    public boolean isOccupied(Vector2d position)
+    /*public boolean isOccupied(Vector2d position)  NIEPOTRZEBNE
     {
         boolean isAnimHere = super.isOccupied(position);
 
@@ -73,25 +44,33 @@ public class GrassField extends AbstractWorldMap{
                 if(x.getValue().getPosition().equals(position)) return true;
             }
         return isAnimHere;
-    }
+    }*/
 
     public Grass grassAt(Vector2d position){
-        for (Map.Entry<Vector2d, Grass> x : grasses.entrySet()) {
-            if (x.getValue().getPosition().equals(position)) return x.getValue();
+        ArrayList<IMapElement> objctsAt = super.objectsAt(position);
+        IMapElement first = null;
+
+        if(objctsAt != null)
+        {
+            for (IMapElement e: objctsAt) {
+                if(e.getClass() ==Grass.class)
+                    return (Grass) e;
+            }
         }
+
         return null;
     }
 
     public IMapElement objectAt(Vector2d position) {
-        IMapElement obAt = super.objectAt(position);
-        if(obAt == null)
+        ArrayList<IMapElement> objctsAt = super.objectsAt(position);
+        IMapElement first = null;
+
+        if(objctsAt != null)
         {
-            for (Map.Entry<Vector2d, Grass> x : grasses.entrySet())
-            {
-                if (x.getValue().getPosition().equals(position)) return x.getValue();
-            }
+           objctsAt.sort(new AnimalGrassComparator() );
+           first = objctsAt.get(objctsAt.size()-1);
         }
-        return obAt;
+        return first;
     }
 
 
@@ -106,7 +85,8 @@ public class GrassField extends AbstractWorldMap{
 
         return super.toString();
     }
-    private void cutGrass(Vector2d grassPos){  // czy public?  a gdyby jako parametr przyjmować pozycję?
+
+    /*private void cutGrass(Vector2d grassPos){  // inaczej ma dzialac
         Grass g = grassAt(grassPos);
         if(g!=null) {
             System.out.println("OMOM, grass munched at" +grassPos);
@@ -114,12 +94,44 @@ public class GrassField extends AbstractWorldMap{
             grasses.remove(grassPos);
             plantGrasses(1);
         }
-    }
+    }*/
 
     @Override
-    public void positionChanged(Vector2d oldPosition, Vector2d newPosition, IMapElement e) {
-        super.positionChanged(oldPosition,newPosition, e);
+    void addToMap(Vector2d key, IMapElement e){
+       super.addToMap(key,e);
+       emptyMapSlots.remove(key);
+    }
+    @Override
+    void removeFromMap(Vector2d key, IMapElement e )
+    {
+        super.removeFromMap(key,e);
+        if(!objectsOnMap.containsKey(key))
+        {
+            emptyMapSlots.add(key);
+        }
+    }
 
-        cutGrass(newPosition);
+    public String DebugOutput(){
+        return super.toString();
+    }
+}
+
+class AnimalGrassComparator implements Comparator<IMapElement>{
+
+    @Override
+    public int compare(IMapElement o1, IMapElement o2) {
+        if(o1.getClass() ==Animal.class)
+        {
+
+            if( o2.getClass() == Grass.class)
+                return 1;
+            else if(o2.getClass() == Animal.class)
+                return Integer.compare(((Animal) o1).getEnergy(),((Animal) o2).getEnergy());
+
+            return 0;
+        }
+        else if (o2.getClass() ==Animal.class){ return -1;}
+
+        return 0;
     }
 }
