@@ -16,42 +16,38 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Objects;
 
 public class App extends Application {
     GrassField map1;
     GrassField map2;
-    private double width =40;
-    private double height=40;
     private ImageLoader imageLoader;
     private Vector2d borderSW = new Vector2d(0,0);
     private Vector2d borderNE = new Vector2d(0,0);
     private GridPane gridPane1;
     private GridPane gridPane2;
     private Scene scene;
-    private Thread engineThread1;
     private SimulationEngine simulationEngine1;
-    private Thread engineThread2;
     private SimulationEngine simulationEngine2;
     private Stage _primaryStage;
 
     private TextArea signalMap2;
     private TextArea signalMap1;
 
-    private Animal inspected1 = null;
     private TextArea inspectorMap1;
-    private Animal inspected2 = null;
     private TextArea inspectorMap2;
 
     XYChart.Series animalNumberSeries1 = new XYChart.Series();
-    LineChart<Integer,Integer> animalNumberChart1;
+    LineChart animalNumberChart1;
     XYChart.Series grassNumberSeries1 =new XYChart.Series();
-    LineChart<Integer,Integer> grassNumberChart1;
+    LineChart grassNumberChart1;
     XYChart.Series averageEnergySeries1 = new XYChart.Series();
-    LineChart<Integer,Integer> averageEnergy1;
+    LineChart averageEnergy1;
     XYChart.Series averageLifespanSeries1 = new XYChart.Series();
-    LineChart<Integer,Integer> averageLifespan1;
+    LineChart averageLifespan1;
     XYChart.Series averageChildrenForLivingSeries1 = new XYChart.Series();
-    LineChart<Integer,Integer> averageChildrenForLivingCount1;
+    LineChart averageChildrenForLivingCount1;
     Label dominantGenotype1;
 
     XYChart.Series animalNumberSeries2 = new XYChart.Series();
@@ -65,6 +61,9 @@ public class App extends Application {
     XYChart.Series averageChildrenForLivingSeries2 = new XYChart.Series();
     LineChart<Integer,Integer> averageChildrenForLivingCount2;
     Label dominantGenotype2;
+
+    StringBuilder out1 = new StringBuilder();
+    StringBuilder out2 = new StringBuilder();
 
 
     void recalculateBorders(GrassField map)
@@ -157,13 +156,75 @@ public class App extends Application {
 
         Button pause1 = new Button("Start");
         Button pause2 = new Button("Start");
+        Button save1 = new Button("SAVE");
+        Button save2 = new Button("SAVE");
 
         pause1.setOnAction( value ->{
             simulationEngine1.interrupt();
+            if(Objects.equals(pause1.getText(), "Start"))pause1.setText("Stop");
+            else if(Objects.equals(pause1.getText(), "Stop"))pause1.setText("Start");
         });
         pause2.setOnAction( value ->{
             simulationEngine2.interrupt();
+            if(Objects.equals(pause2.getText(), "Start"))pause2.setText("Stop");
+            else if(Objects.equals(pause2.getText(), "Stop"))pause2.setText("Start");
         });
+        save1.setOnAction( value ->{
+            try (PrintWriter writer = new PrintWriter("map1.csv")) {
+
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("animals");
+                sb.append(' ');
+                sb.append("grasses");
+                sb.append(' ');
+                sb.append("avgEnergy");
+                sb.append(' ');
+                sb.append("avgLifespan");
+                sb.append(' ');
+                sb.append("avgChildren");
+                sb.append('\n');
+
+                sb.append(out1);
+
+                writer.write(sb.toString());
+
+                System.out.println("done!");
+
+            } catch (FileNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
+
+
+        });
+        save2.setOnAction( value ->{
+            try (PrintWriter writer = new PrintWriter("map2.csv")) {
+
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("animals");
+                sb.append(',');
+                sb.append("grasses");
+                sb.append(',');
+                sb.append("avgEnergy");
+                sb.append(',');
+                sb.append("avgLifespan");
+                sb.append(',');
+                sb.append("avgChildren");
+                sb.append('\n');
+
+                sb.append(out2);
+
+                writer.write(sb.toString());
+
+                System.out.println("done!");
+
+            } catch (FileNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
+
+
+    });
 
         signalMap1 = new TextArea("----OUTPUT----");
        // signalMap1.setMinWidth(100);
@@ -173,7 +234,9 @@ public class App extends Application {
        // signalMap2.setMinHeight(5);
 
         inspectorMap1 = new TextArea("No inspected, hit pause and choose your animal");
+        inspectorMap1.setMinHeight(100);
         inspectorMap2 = new TextArea("No inspected, hit pause and choose your animal");
+        inspectorMap2.setMinHeight(100);
 
         animalNumberChart1 = new LineChart(new NumberAxis(), new NumberAxis());
         animalNumberChart1.getXAxis().setLabel("day");
@@ -222,8 +285,8 @@ public class App extends Application {
         averageChildrenForLivingCount2.getData().add(averageChildrenForLivingSeries2);
 
 
-        VBox maplabels1 = new VBox(new HBox(new Label("map1"),dominantGenotype1),gridPane1,pause1, new HBox(signalMap1, inspectorMap1) , new HBox(animalNumberChart1, averageEnergy1,grassNumberChart1), new HBox(averageLifespan1,averageChildrenForLivingCount1));
-        VBox maplabels2 = new VBox(new HBox(new Label("map2"),dominantGenotype2),gridPane2,pause2, new HBox(signalMap2, inspectorMap2) ,  new HBox(animalNumberChart2, averageEnergy2,grassNumberChart2), new HBox(averageLifespan2,averageChildrenForLivingCount2));
+        VBox maplabels1 = new VBox(new HBox(new Label("map1"),dominantGenotype1),gridPane1,new HBox(pause1,save1), new HBox(signalMap1, inspectorMap1) , new HBox(animalNumberChart1, averageEnergy1,grassNumberChart1), new HBox(averageLifespan1,averageChildrenForLivingCount1));
+        VBox maplabels2 = new VBox(new HBox(new Label("map2"),dominantGenotype2),gridPane2,new HBox(pause2,save2), new HBox(signalMap2, inspectorMap2) ,  new HBox(animalNumberChart2, averageEnergy2,grassNumberChart2), new HBox(averageLifespan2,averageChildrenForLivingCount2));
         HBox maps = new HBox(maplabels1,maplabels2);
 
         scene = new Scene(maps, 400 ,800);
@@ -247,7 +310,9 @@ public class App extends Application {
 
     private void setHalignment(GridPane g)
     {
+        double width = 40;
         g.getColumnConstraints().add(new ColumnConstraints(width));
+        double height = 40;
         g.getRowConstraints().add(new RowConstraints(height));
             for (int i = borderSW.x; i<= borderNE.x; i++)
             {
@@ -351,7 +416,7 @@ public class App extends Application {
             map1 = new GrassField(mapWidth,mapHeight ,jungleRatio);
             simulationEngine1 = new SimulationEngine( map1, plantEnergy,startingAnimals, startingEnergy, moveEnergy, true, magical);
             simulationEngine1.addListener(this);
-            engineThread1 = new Thread(simulationEngine1);
+            Thread engineThread1 = new Thread(simulationEngine1);
             recalculateBorders(map1);
             setHalignment(gridPane1);
             drawMap(gridPane1,map1,isMap1);
@@ -365,7 +430,7 @@ public class App extends Application {
             map2 = new GrassFieldWithoutBorders(mapWidth,mapHeight ,jungleRatio);
             simulationEngine2 = new SimulationEngine( map2, plantEnergy,startingAnimals, startingEnergy, moveEnergy, false, magical);
             simulationEngine2.addListener(this);
-            engineThread2 = new Thread(simulationEngine2);
+            Thread engineThread2 = new Thread(simulationEngine2);
             recalculateBorders(map2);
             setHalignment(gridPane2);
             drawMap(gridPane2,map2,isMap1);
@@ -420,7 +485,17 @@ public class App extends Application {
             averageLifespanSeries.getData().add(new XYChart.Data(day, averageLifespan));
             averageChildrenForLivingSeries.getData().add(new XYChart.Data(day, averageChildrenforLiving));
 
-
+            StringBuilder out = isMap1 ? out1 :out2;
+            out.append(animalCount);
+            out.append(',');
+            out.append(grassNumber);
+            out.append(',');
+            out.append(averageEnergy);
+            out.append(',');
+            out.append(averageLifespan);
+            out.append(',');
+            out.append(averageChildrenforLiving);
+            out.append('\n');
 
             Label dominantGenotype = isMap1 ? dominantGenotype1 : dominantGenotype2;
             dominantGenotype.setText("Dominant genotype is:"+dominantGene);
