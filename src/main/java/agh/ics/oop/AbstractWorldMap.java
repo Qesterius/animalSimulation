@@ -33,7 +33,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
             animal.addObserver(this);
             addToMap(animal.getPosition(), animal);
         }
-        throw new IllegalArgumentException(animal.getPosition() + " is illegal starting point for animal");
+        else throw new IllegalArgumentException(animal.getPosition() + " is illegal starting point for animal");
     }
 
     public boolean isPositionWithinMapBorders(Vector2d pos){//g
@@ -42,7 +42,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     public Vector2d processPossibleMove(Vector2d from,Vector2d to) {//g
-        return isPositionWithinMapBorders(to) ? from : to;
+        return isPositionWithinMapBorders(to) ? to : from;
     }
 
     public boolean isOccupied(Vector2d position) {//?
@@ -79,5 +79,9 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     public Vector2d getBorderSW() {
         return new Vector2d(BorderSW);
+    }
+
+    public java.util.Set<Vector2d> getKeySet(){
+        return objectsOnMap.keySet();
     }
 }

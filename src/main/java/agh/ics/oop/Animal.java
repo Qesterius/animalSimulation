@@ -8,18 +8,41 @@ public class Animal implements IMapElement{//, Comparable<IMapElement> {
     private MapDirection orientation;
     private IWorldMap myMap;
     private List<IPositionChangeObserver> observers = new ArrayList<IPositionChangeObserver>();
-    private Gene genotyp;
+    private final Integer startingEnergy;
+
+
+    int numberOfKids = 0;
+    public int deathDay = -1;
+
+    public Gene getGenotyp() {
+        return genotyp;
+    }
+
+    private final Gene genotyp;
+
+    public void setEnergy(Integer energy) {
+        this.energy = energy;
+    }
+
     private Integer energy;
 
-
-
-
-
-    public Animal(IWorldMap mapa, Vector2d initPos, Gene g) {
+    public Animal(IWorldMap mapa, Vector2d initPos, Gene g, Integer startingEnergy) {
         myMap = mapa;
         position = initPos;
         orientation = MapDirection.NORTH;
+        energy = startingEnergy;
+        this.startingEnergy = startingEnergy;
         genotyp = g;
+    }
+    public void eat(Integer energyADD)
+    {
+           energy+= energyADD;
+    }
+    public void kill(int day){
+
+        System.out.println("killing "+ this);
+        deathDay = day;
+
     }
 
     @Override
@@ -53,7 +76,13 @@ public class Animal implements IMapElement{//, Comparable<IMapElement> {
             positionChanged(lastpos, position);
         }
     }
-
+    public void move()
+    {
+        move(genotyp.getRandDirection());
+    }
+    public String printGene(){
+        return genotyp.toString();
+    }
 
     @Override
     public String toString() {
@@ -84,10 +113,22 @@ public class Animal implements IMapElement{//, Comparable<IMapElement> {
             case NORTH -> out = "U";
             case SOUTH -> out = "D";
             case SOUTH_WEST -> out = "LD";
-            case WEST_NORTH -> out = "LU";
+             case WEST_NORTH -> out = "LU";
             case NORTH_EAST -> out = "RU";
             case EAST_SOUTH -> out = "RD";
         }
+        return out;
+    }
+    public String getEnergyFilename() {
+        String out = "";
+        if(energy>0)
+            out = "ENERGY1";
+        if(energy>=startingEnergy*(0.25))
+            out = "ENERGY2";
+        if(energy>=startingEnergy*(0.5))
+            out = "ENERGY3";
+        if(energy>=startingEnergy*(0.75))
+            out = "ENERGY4";
         return out;
     }
 
@@ -107,14 +148,4 @@ public class Animal implements IMapElement{//, Comparable<IMapElement> {
     }
     public Integer getEnergy(){ return energy;}
 
-/*
-    @Override
-    public int compareTo(IMapElement o) {
-        if( o.getClass() == Grass.class)
-            return 1;
-        else if(o.getClass() == Animal.class)
-            return Integer.compare(this.energy,((Animal) o).energy);
-
-        return 0;
-    }*/
 }

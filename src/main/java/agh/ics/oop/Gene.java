@@ -11,25 +11,25 @@ public class Gene {
 
     public Gene() //random gene generation
     {
+       // System.out.println("Genecreating: ...");
         rand = new Random();
         List<Integer> endsOfGini = new ArrayList<>();
-        for(int i=0;i<8;i++){
+        for(int i=0;i<7;i++){
             endsOfGini.add(rand.nextInt(32));
         }
+        endsOfGini.add(32);
+       // System.out.println(endsOfGini);
         Collections.sort(endsOfGini);
+        //System.out.println(endsOfGini);
 
         geneCode = new ArrayList<>();
         for(int i=0;i<8;i++)
         {
-            int breakpoint = endsOfGini.get(0);
+            int breakpoint = endsOfGini.get(i);
             while(geneCode.size()<breakpoint){
                 geneCode.add(MoveDirection.BACKWARD.createDir(i));
             }
-
         }
-
-
-
     }
 
     public Gene(MoveDirection[] tab)
@@ -85,5 +85,18 @@ public class Gene {
 
     public MoveDirection getRandDirection() {
         return geneCode.get(rand.nextInt(32));
+    }
+
+    @Override
+    public String toString() {
+        String out="";
+        for (MoveDirection x: geneCode) {
+            out+= x.toString()+ " ";
+
+        }
+        return "Gene{" +
+                "geneCode=" + out +
+                ", rand=" + rand +
+                '}';
     }
 }

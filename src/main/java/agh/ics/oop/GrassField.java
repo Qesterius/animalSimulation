@@ -4,9 +4,28 @@ import java.util.*;
 
 public class GrassField extends AbstractWorldMap{
     protected ArrayList<Vector2d> emptyMapSlots = new ArrayList<>();
-    private Random random = new Random();   // to nie może być prywatne?
-    private int plantRegion;    // to nie może być prywatne?
+    protected ArrayList<Vector2d> emptyJungleSlots = new ArrayList<>();
 
+    public ArrayList<Vector2d> getEmptyMapSlots() {
+        return emptyMapSlots;
+    }
+
+    public ArrayList<Vector2d> getEmptyJungleSlots() {
+        return emptyJungleSlots;
+    }
+
+    public Vector2d getJungleBorderNE() {
+        return jungleBorderNE;
+    }
+
+    public Vector2d getJungleBorderSW() {
+        return jungleBorderSW;
+    }
+
+
+    private Random random = new Random();
+    private Vector2d jungleBorderNE;
+    private Vector2d jungleBorderSW;
 
     public GrassField(int width, int height, double jungleRatio)
     {
@@ -14,37 +33,36 @@ public class GrassField extends AbstractWorldMap{
         BorderNE = new Vector2d(width-1, height-1);
         BorderSW = new Vector2d(0, 0);
 
+        //jungle setup
+        int junglewidth = (int) Math.ceil(width*jungleRatio);
+        int jungleheight = (int) Math.ceil(height*jungleRatio);
+
+        jungleBorderSW = new Vector2d( (int) Math.floor((width-junglewidth)/2),(int) Math.floor((height-jungleheight)/2));
+        jungleBorderNE = new Vector2d(jungleBorderSW.x+junglewidth,jungleBorderSW.y+jungleheight);
+
+
+
         for(int x=BorderSW.x; x<=BorderNE.x;x++)
             for(int y= BorderSW.y;y<=BorderNE.y;y++)
-                emptyMapSlots.add(new Vector2d(x,y));
+            {
+                Vector2d wektor = new Vector2d(x,y);
+                if(wektor.precedes(jungleBorderNE) && wektor.follows(jungleBorderSW))
+                    emptyJungleSlots.add(wektor);
+                else
+                    emptyMapSlots.add(wektor);
+            }
     }
 
 
-    private void plantGrasses(int grassQuantity)
-    {
-    //toworkm
-    }
-
-
-    private void place(Grass grass) {//g
+    void place(Grass grass) {//g
             addToMap(grass.getPosition(),grass);
     }
 
-    /*public void place(Animal animal)
+    void cutGrass(Grass g)
     {
-        addToMap(animal.getPosition(),animal);
-    }*///w abstrakcie jest wysstarczajaco napisane
-
-    /*public boolean isOccupied(Vector2d position)  NIEPOTRZEBNE
-    {
-        boolean isAnimHere = super.isOccupied(position);
-
-        if(!isAnimHere)
-            for(Map.Entry<Vector2d, Grass> x : grasses.entrySet()){
-                if(x.getValue().getPosition().equals(position)) return true;
-            }
-        return isAnimHere;
-    }*/
+        //removeFromMap(g.getPosition(),g);
+        g.cut();
+    }
 
     public Grass grassAt(Vector2d position){
         ArrayList<IMapElement> objctsAt = super.objectsAt(position);
@@ -72,48 +90,65 @@ public class GrassField extends AbstractWorldMap{
         }
         return first;
     }
+    public ArrayList<Animal> animalsAt(Vector2d position) {
+        ArrayList<IMapElement> objctsAt = super.objectsAt(position);
+        ArrayList<Animal> _animals = new ArrayList<>();
 
+
+        if(objctsAt != null)
+        {
+           objctsAt.sort(new AnimalGrassComparator() );
+            for (IMapElement e: objctsAt) {
+                if(e.getClass()==Animal.class)
+                    _animals.add((Animal) e);
+            }
+        }
+        return _animals;
+    }
 
     @Override
     public String toString()
-    {
-        /*for (Map.Entry<Vector2d, Animal> x : animals.entrySet()) {
-
-            BorderNE = BorderNE.upperRight(x.getValue().getPosition());
-            BorderSW = BorderSW.lowerLeft(x.getValue().getPosition());
-        }*/
-
-        return super.toString();
-    }
-
-    /*private void cutGrass(Vector2d grassPos){  // inaczej ma dzialac
-        Grass g = grassAt(grassPos);
-        if(g!=null) {
-            System.out.println("OMOM, grass munched at" +grassPos);
-            g.cut();
-            grasses.remove(grassPos);
-            plantGrasses(1);
-        }
-    }*/
+    {return super.toString();}
 
     @Override
     void addToMap(Vector2d key, IMapElement e){
        super.addToMap(key,e);
-       emptyMapSlots.remove(key);
+        if(key.precedes(jungleBorderNE) && key.follows(jungleBorderSW))
+            emptyJungleSlots.remove(key);
+        else
+            emptyMapSlots.remove(key);
     }
+
     @Override
     void removeFromMap(Vector2d key, IMapElement e )
     {
         super.removeFromMap(key,e);
         if(!objectsOnMap.containsKey(key))
         {
-            emptyMapSlots.add(key);
+            if(key.precedes(jungleBorderNE) && key.follows(jungleBorderSW))
+                emptyJungleSlots.add(key);
+            else
+                emptyMapSlots.add(key);
         }
     }
 
     public String DebugOutput(){
         return super.toString();
     }
+
+    public Vector2d randomPositionWithin(){
+        return new Vector2d(random.nextInt(BorderNE.x+1- BorderSW.x)+BorderSW.x, random.nextInt(BorderNE.y+1- BorderSW.y)+BorderSW.y);
+
+    }
+    public Vector2d randomEmptyPositionWithin(){
+        ArrayList<Vector2d> sum = new ArrayList<>(emptyJungleSlots);
+        sum.addAll(new ArrayList<>(emptyMapSlots));
+        if(sum.size()>0)
+            return sum.get(random.nextInt(sum.size()));
+        else
+            return null;
+    }
+
 }
 
 class AnimalGrassComparator implements Comparator<IMapElement>{
