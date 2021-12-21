@@ -67,17 +67,14 @@ public class App extends Application {
     Label dominantGenotype2;
 
 
-    boolean recalculateBorders(GrassField map)
+    void recalculateBorders(GrassField map)
     {
 
         Vector2d newBorderNE = map.getBorderNE();
         Vector2d newBorderSW = map.getBorderSW();
-
-        boolean out =((newBorderNE!= borderNE || newBorderSW!= borderSW));
         borderNE = newBorderNE;
         borderSW = newBorderSW;
 
-        return out;
     }
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -141,6 +138,7 @@ public class App extends Application {
                         isMap1Magic.isSelected(),
                         isMap2Magic.isSelected()
                 );
+
             }catch (IllegalArgumentException e)
             {
                 output.setText(e.getMessage());
@@ -178,22 +176,54 @@ public class App extends Application {
         inspectorMap2 = new TextArea("No inspected, hit pause and choose your animal");
 
         animalNumberChart1 = new LineChart(new NumberAxis(), new NumberAxis());
+        animalNumberChart1.getXAxis().setLabel("day");
+        animalNumberChart1.getYAxis().setLabel("animals");
         grassNumberChart1= new LineChart(new NumberAxis(), new NumberAxis());
+        grassNumberChart1.getXAxis().setLabel("day");
+        grassNumberChart1.getYAxis().setLabel("grasses");
         averageEnergy1= new LineChart(new NumberAxis(), new NumberAxis());
+        averageEnergy1.getXAxis().setLabel("day");
+        averageEnergy1.getYAxis().setLabel("energy avg");
         averageLifespan1= new LineChart(new NumberAxis(), new NumberAxis());
+        averageLifespan1.getXAxis().setLabel("day");
+        averageLifespan1.getYAxis().setLabel("lifespan avg");
         averageChildrenForLivingCount1= new LineChart(new NumberAxis(), new NumberAxis());
+        averageChildrenForLivingCount1.getXAxis().setLabel("day");
+        averageChildrenForLivingCount1.getYAxis().setLabel("children of living animals avg");
         dominantGenotype1= new Label();
 
         animalNumberChart2= new LineChart(new NumberAxis(), new NumberAxis());
+        animalNumberChart2.getXAxis().setLabel("day");
+        animalNumberChart2.getYAxis().setLabel("animals");
         grassNumberChart2= new LineChart(new NumberAxis(), new NumberAxis());
+        grassNumberChart2.getXAxis().setLabel("day");
+        grassNumberChart2.getYAxis().setLabel("grasses");
         averageEnergy2= new LineChart(new NumberAxis(), new NumberAxis());
+        averageEnergy2.getXAxis().setLabel("day");
+        averageEnergy2.getYAxis().setLabel("energy avg");
         averageLifespan2= new LineChart(new NumberAxis(), new NumberAxis());
+        averageLifespan2.getXAxis().setLabel("day");
+        averageLifespan2.getYAxis().setLabel("lifespan avg");
         averageChildrenForLivingCount2= new LineChart(new NumberAxis(), new NumberAxis());
+        averageChildrenForLivingCount2.getXAxis().setLabel("day");
+        averageChildrenForLivingCount2.getYAxis().setLabel("children of living animals avg");
         dominantGenotype2= new Label();
 
+        animalNumberChart1.getData().add(animalNumberSeries1);
+        grassNumberChart1.getData().add(grassNumberSeries1);
+        averageEnergy1.getData().add(averageEnergySeries1);
+        averageLifespan1.getData().add(averageLifespanSeries1);
+        averageChildrenForLivingCount1.getData().add(averageChildrenForLivingSeries1);
 
-        VBox maplabels1 = new VBox(new Label("map1"),gridPane1,pause1, new HBox(signalMap1, inspectorMap1) , new HBox(animalNumberChart1, averageEnergy1,grassNumberChart1), new HBox(averageLifespan1,averageChildrenForLivingCount1,dominantGenotype1));
-        VBox maplabels2 = new VBox(new Label("map2"),gridPane2,pause2, new HBox(signalMap2, inspectorMap2) ,  new HBox(animalNumberChart2, averageEnergy2,grassNumberChart2), new HBox(averageLifespan2,averageChildrenForLivingCount2, dominantGenotype2));
+        animalNumberChart2.getData().add(animalNumberSeries2);
+        grassNumberChart2.getData().add(grassNumberSeries2);
+        averageEnergy2.getData().add(averageEnergySeries2);
+        averageLifespan2.getData().add(averageLifespanSeries2);
+        averageChildrenForLivingCount2.getData().add(averageChildrenForLivingSeries2);
+
+
+        VBox maplabels1 = new VBox(new HBox(new Label("map1"),dominantGenotype1),gridPane1,pause1, new HBox(signalMap1, inspectorMap1) , new HBox(animalNumberChart1, averageEnergy1,grassNumberChart1), new HBox(averageLifespan1,averageChildrenForLivingCount1));
+        VBox maplabels2 = new VBox(new HBox(new Label("map2"),dominantGenotype2),gridPane2,pause2, new HBox(signalMap2, inspectorMap2) ,  new HBox(animalNumberChart2, averageEnergy2,grassNumberChart2), new HBox(averageLifespan2,averageChildrenForLivingCount2));
         HBox maps = new HBox(maplabels1,maplabels2);
 
         scene = new Scene(maps, 400 ,800);
@@ -206,10 +236,7 @@ public class App extends Application {
         startThread(startingAnimals,startingEnergy,mapHeight,mapWidth,moveEnergy,plantEnergy,jungleRatio,magical2,false);
 
     }
-    public void init()
-    {
 
-    }
 
     Vector2d convertToMapPosition(Vector2d from){
         return new Vector2d(from.x - borderSW.x + 1,  borderNE.y-from.y + 1);
@@ -370,6 +397,35 @@ public class App extends Application {
                 simulationEngine1.requestInspecting(position);
             else
                 simulationEngine2.requestInspecting(position);
+    }
+
+    public void sendData(boolean isMap1, int day, int animalCount, int grassNumber, double averageEnergy, double averageLifespan, double averageChildrenforLiving, Gene dominantGene)
+    {
+        Platform.runLater(()->{
+            XYChart.Series animalNumberSeries = isMap1 ? animalNumberSeries1 :animalNumberSeries2;
+            XYChart.Series grassNumberSeries = isMap1 ? grassNumberSeries1 :grassNumberSeries2;
+            XYChart.Series averageEnergySeries = isMap1 ? averageEnergySeries1 :averageEnergySeries2;
+            XYChart.Series averageLifespanSeries = isMap1 ? averageLifespanSeries1 :averageLifespanSeries2;
+            XYChart.Series averageChildrenForLivingSeries = isMap1 ? averageChildrenForLivingSeries1 :averageChildrenForLivingSeries2;
+
+            LineChart<Integer, Integer> animalNumberChart = isMap1 ? animalNumberChart1 :animalNumberChart2;
+            LineChart<Integer, Integer> grassNumberChart = isMap1 ? grassNumberChart1 :grassNumberChart2;
+            LineChart<Integer, Integer> averageEnergyChart = isMap1 ? averageEnergy1 :averageEnergy2;
+            LineChart<Integer, Integer> averageLifespanChart = isMap1 ? averageLifespan1 :averageLifespan2;
+            LineChart<Integer, Integer> averageChildrenForLivingCountChart = isMap1 ? averageChildrenForLivingCount1 :averageChildrenForLivingCount2;
+
+            animalNumberSeries.getData().add(new XYChart.Data(day, animalCount));
+            grassNumberSeries.getData().add(new XYChart.Data(day, grassNumber));
+            averageEnergySeries.getData().add(new XYChart.Data(day, averageEnergy));
+            averageLifespanSeries.getData().add(new XYChart.Data(day, averageLifespan));
+            averageChildrenForLivingSeries.getData().add(new XYChart.Data(day, averageChildrenforLiving));
+
+
+
+            Label dominantGenotype = isMap1 ? dominantGenotype1 : dominantGenotype2;
+            dominantGenotype.setText("Dominant genotype is:"+dominantGene);
+
+        });
     }
 
 }

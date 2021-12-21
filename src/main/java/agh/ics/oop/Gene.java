@@ -1,13 +1,23 @@
 package agh.ics.oop;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Gene {
     private ArrayList<MoveDirection> geneCode;
     private Random rand;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Gene gene = (Gene) o;
+        return geneCode.equals(gene.geneCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(geneCode);
+    }
 
     public Gene() //random gene generation
     {
@@ -91,12 +101,11 @@ public class Gene {
     public String toString() {
         String out="";
         for (MoveDirection x: geneCode) {
-            out+= x.toString()+ " ";
+            out+= x.toInt().toString()+ " ";
 
         }
         return "Gene{" +
-                "geneCode=" + out +
-                ", rand=" + rand +
-                '}';
+                "geneCode=" + out;
     }
+
 }

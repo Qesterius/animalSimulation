@@ -11,7 +11,8 @@ public class Animal implements IMapElement{//, Comparable<IMapElement> {
     private final Integer startingEnergy;
 
 
-    int numberOfKids = 0;
+    public int numberOfKids = 0;
+    public int birthDay = -1;
     public int deathDay = -1;
 
     public Gene getGenotyp() {
@@ -26,13 +27,14 @@ public class Animal implements IMapElement{//, Comparable<IMapElement> {
 
     private Integer energy;
 
-    public Animal(IWorldMap mapa, Vector2d initPos, Gene g, Integer startingEnergy) {
+    public Animal(IWorldMap mapa, Vector2d initPos, Gene g, Integer startingEnergy,int birthDay) {
         myMap = mapa;
         position = initPos;
         orientation = MapDirection.NORTH;
         energy = startingEnergy;
         this.startingEnergy = startingEnergy;
         genotyp = g;
+        this.birthDay = birthDay;
     }
     public void eat(Integer energyADD)
     {

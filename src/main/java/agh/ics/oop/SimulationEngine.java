@@ -2,9 +2,7 @@ package agh.ics.oop;
 
 import agh.ics.oop.gui.App;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SimulationEngine implements IEngine, Runnable, IPositionChangeObserver {
@@ -48,7 +46,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
         magicCount = 0;
 
         for (int i = 0; i < numOfAnims; i++) {
-            addAnimal(new Animal(map,map.randomPositionWithin(),new Gene(),startingEnergy));
+            addAnimal(new Animal(map,map.randomPositionWithin(),new Gene(),startingEnergy,1));
         }
     }
 
@@ -74,6 +72,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
                         day+=1;
 
                         renderer.drawCall(isMap1);
+                        sendChartData();
                         if(inspecting.get())
                             sendInspection();
                     }
@@ -102,7 +101,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
                 if(rand!=null)
                 {
                     animalsOut += "Animal at"+(rand.toString())+"\n";
-                    addAnimal(new Animal(map,rand,a.getGenotyp(),a.getEnergy()));
+                    addAnimal(new Animal(map,rand,a.getGenotyp(),a.getEnergy(),day));
                 }
             }
             renderer.sendMessage(isMap1,"Magic Happened\n New Animals emerged:\n" +animalsOut);
@@ -181,9 +180,11 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
                 {
                     int lpenergy = (int) (parent1.getEnergy()*0.25);
                     parent1.setEnergy(parent1.getEnergy()-lpenergy);
+                    parent1.numberOfKids +=1;
 
                     int rpenergy = (int) (parent2.getEnergy()*0.25);
                     parent2.setEnergy(parent2.getEnergy()-rpenergy);
+                    parent2.numberOfKids +=1;
 
                     Animal dziecko = new Animal(map,
                                                 pos,
@@ -193,7 +194,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
                                                                 parent1.getEnergy(),
                                                                 parent2.getGenotyp(),
                                                                 parent2.getEnergy()
-                                                        ),  lpenergy+rpenergy
+                                                        ),  lpenergy+rpenergy,day
                                                 );
                     addAnimal(dziecko);
 
@@ -273,7 +274,38 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
 
     private void sendChartData()
     {
+        Map<Gene,Integer> dominantGenes = new LinkedHashMap<>();
 
+        Double averageEnergy=0.0;
+        Double averageChildrenCount=0.0;
+        for (Animal a: animals) {
+            averageEnergy+= a.getEnergy();
+            averageChildrenCount+=a.numberOfKids;
+            if(dominantGenes.containsKey(a.getGenotyp()))
+                dominantGenes.put(a.getGenotyp(),dominantGenes.get(a.getGenotyp())+1);
+            else
+                dominantGenes.put(a.getGenotyp(),1);
+        }
+        Double averageLifespan = 0.0;
+        for (Animal d: deadAnimals) {
+            averageLifespan += d.deathDay - d.birthDay;
+        }
+        int maxOcurrences =0;
+        Gene dominantGene = null;
+
+        for (Gene gene:dominantGenes.keySet()) {
+            //System.out.println(gene);
+            //System.out.println(dominantGenes.get(gene) );
+            if(maxOcurrences < dominantGenes.get(gene) ) {
+                dominantGene = gene;
+                maxOcurrences = dominantGenes.get(gene);
+            }
+        }
+        averageEnergy = animals.size() != 0 ? averageEnergy/animals.size() : 0.0;
+        averageChildrenCount = animals.size() != 0 ? averageChildrenCount/animals.size() : 0.0;
+        averageLifespan = deadAnimals.size() != 0 ? averageLifespan/deadAnimals.size() : 0.0;
+
+        renderer.sendData(isMap1,day,animals.size(),grassesPos.size(),averageEnergy,averageLifespan,averageChildrenCount,dominantGene);
     }
 
 }
