@@ -40,30 +40,42 @@ public class App extends Application {
 
     XYChart.Series animalNumberSeries1 = new XYChart.Series();
     LineChart animalNumberChart1;
+    Double averageAnimal1=0.0;
     XYChart.Series grassNumberSeries1 =new XYChart.Series();
     LineChart grassNumberChart1;
+    Double averageGrass1=0.0;
     XYChart.Series averageEnergySeries1 = new XYChart.Series();
     LineChart averageEnergy1;
+    Double averageaverageEnergy1=0.0;
     XYChart.Series averageLifespanSeries1 = new XYChart.Series();
     LineChart averageLifespan1;
+    Double averageaverageLifespan1=0.0;
     XYChart.Series averageChildrenForLivingSeries1 = new XYChart.Series();
     LineChart averageChildrenForLivingCount1;
+    Double averageaverageChildrenForLivingCount1=0.0;
     Label dominantGenotype1;
 
     XYChart.Series animalNumberSeries2 = new XYChart.Series();
     LineChart<Integer,Integer> animalNumberChart2;
+    Double averageAnimal2=0.0;
     XYChart.Series grassNumberSeries2 =new XYChart.Series<>();
     LineChart<Integer,Integer> grassNumberChart2;
+    Double averageGrass2=0.0;
     XYChart.Series averageEnergySeries2 = new XYChart.Series();
     LineChart<Integer,Integer> averageEnergy2;
+    Double averageaverageEnergy2=0.0;
     XYChart.Series averageLifespanSeries2 = new XYChart.Series();
     LineChart<Integer,Integer> averageLifespan2;
+    Double averageaverageLifespan2=0.0;
     XYChart.Series averageChildrenForLivingSeries2 = new XYChart.Series();
     LineChart<Integer,Integer> averageChildrenForLivingCount2;
+    Double averageaverageChildrenForLivingCount2=0.0;
     Label dominantGenotype2;
 
     StringBuilder out1 = new StringBuilder();
     StringBuilder out2 = new StringBuilder();
+    private Integer day1=0;
+    private Integer day2=0;
 
 
     void recalculateBorders(GrassField map)
@@ -187,6 +199,17 @@ public class App extends Application {
 
                 sb.append(out1);
 
+                sb.append(averageAnimal1/day1);
+                sb.append(',');
+                sb.append(averageGrass1/day1);
+                sb.append(',');
+                sb.append(averageaverageEnergy1/day1);
+                sb.append(',');
+                sb.append(averageaverageLifespan1/day1);
+                sb.append(',');
+                sb.append(averageaverageChildrenForLivingCount1/day1);
+                sb.append('\n');
+
                 writer.write(sb.toString());
 
                 System.out.println("done!");
@@ -214,6 +237,17 @@ public class App extends Application {
                 sb.append('\n');
 
                 sb.append(out2);
+
+                sb.append(averageAnimal2/day2);
+                sb.append(',');
+                sb.append(averageGrass2/day2);
+                sb.append(',');
+                sb.append(averageaverageEnergy2/day2);
+                sb.append(',');
+                sb.append(averageaverageLifespan2/day2);
+                sb.append(',');
+                sb.append(averageaverageChildrenForLivingCount2/day2);
+                sb.append('\n');
 
                 writer.write(sb.toString());
 
@@ -485,6 +519,23 @@ public class App extends Application {
             averageLifespanSeries.getData().add(new XYChart.Data(day, averageLifespan));
             averageChildrenForLivingSeries.getData().add(new XYChart.Data(day, averageChildrenforLiving));
 
+            if(isMap1) {
+                averageAnimal1 += animalCount;
+                averageGrass1 += grassNumber;
+                averageaverageEnergy1 += averageEnergy;
+                averageaverageLifespan1 += averageLifespan;
+                averageaverageChildrenForLivingCount1 += averageChildrenforLiving;
+            }
+            else
+            {
+                averageAnimal2 += animalCount;
+                averageGrass2 += grassNumber;
+                averageaverageEnergy2 += averageEnergy;
+                averageaverageLifespan2 += averageLifespan;
+                averageaverageChildrenForLivingCount2 += averageChildrenforLiving;
+            }
+
+
             StringBuilder out = isMap1 ? out1 :out2;
             out.append(animalCount);
             out.append(',');
@@ -496,6 +547,11 @@ public class App extends Application {
             out.append(',');
             out.append(averageChildrenforLiving);
             out.append('\n');
+
+            if(isMap1)
+                day1 = day;
+            else
+                day2 = day;
 
             Label dominantGenotype = isMap1 ? dominantGenotype1 : dominantGenotype2;
             dominantGenotype.setText("Dominant genotype is:"+dominantGene);
