@@ -6,34 +6,36 @@ import java.util.List;
 public class Animal implements IMapElement{//, Comparable<IMapElement> {
     private Vector2d position;
     private MapDirection orientation;
-    private IWorldMap myMap;
+    private final IWorldMap myMap;
     private List<IPositionChangeObserver> observers = new ArrayList<IPositionChangeObserver>();
     private final Integer startingEnergy;
 
+    private int numberOfKids = 0;
+        public int getNumberOfKids() { return numberOfKids; }
+        public void increaseNumberOfKids() { this.numberOfKids += 1; }
+    private final int birthDay;
+        public int getBirthDay() { return birthDay; }
+    private int deathDay = -1;
+        public int getDeathDay() { return deathDay; }
 
-    public int numberOfKids = 0;
-    public int birthDay = -1;
-    public int deathDay = -1;
 
-    public Gene getGenotyp() {
-        return genotyp;
-    }
-
-    private final Gene genotyp;
-
-    public void setEnergy(Integer energy) {
-        this.energy = energy;
+    private final Gene genotype;
+        public Gene getGenotype() {
+        return genotype;
     }
 
     private Integer energy;
+        public void setEnergy(Integer energy) {
+        this.energy = energy;
+    }
 
-    public Animal(IWorldMap mapa, Vector2d initPos, Gene g, Integer startingEnergy,int birthDay) {
-        myMap = mapa;
+    public Animal(IWorldMap map, Vector2d initPos, Gene g, Integer startingEnergy,int birthDay) {
+        myMap = map;
         position = initPos;
         orientation = MapDirection.NORTH;
         energy = startingEnergy;
         this.startingEnergy = startingEnergy;
-        genotyp = g;
+        genotype = g;
         this.birthDay = birthDay;
     }
     public void eat(Integer energyADD)
@@ -44,19 +46,15 @@ public class Animal implements IMapElement{//, Comparable<IMapElement> {
 
         System.out.println("killing "+ this);
         deathDay = day;
-
     }
-
     @Override
     public Vector2d getPosition() {
         return new Vector2d(position);
     }
 
-
     public MapDirection getOrientation() {
         return orientation;
     }
-
 
     public void move(MoveDirection dir) {
         Vector2d possibleMove = getPosition();
@@ -73,17 +71,14 @@ public class Animal implements IMapElement{//, Comparable<IMapElement> {
         }
         possibleMove = myMap.processPossibleMove(position,possibleMove);
         if ( position != possibleMove ) {
-            Vector2d lastpos = getPosition();
+            Vector2d lastPosition = getPosition();
             position = possibleMove;
-            positionChanged(lastpos, position);
+            positionChanged(lastPosition, position);
         }
     }
     public void move()
     {
-        move(genotyp.getRandDirection());
-    }
-    public String printGene(){
-        return genotyp.toString();
+        move(genotype.getRandDirection());
     }
 
     @Override

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Grass implements IMapElement{//, Comparable<IMapElement>{
-    Vector2d position;
+    private final Vector2d position;
     private List<IPositionChangeObserver> observers = new ArrayList<IPositionChangeObserver>();
 
     public Grass(Vector2d pos){ position = pos;}
@@ -34,8 +34,6 @@ public class Grass implements IMapElement{//, Comparable<IMapElement>{
     public String toString() {
         return "*";
     }
-
-
 
     public void addObserver(IPositionChangeObserver observer) {
         observers.add(observer);

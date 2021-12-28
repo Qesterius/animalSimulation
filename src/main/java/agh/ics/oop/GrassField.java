@@ -23,7 +23,7 @@ public class GrassField extends AbstractWorldMap{
     }
 
 
-    private Random random = new Random();
+    private final Random random = new Random();
     private Vector2d jungleBorderNE;
     private Vector2d jungleBorderSW;
 
@@ -55,18 +55,17 @@ public class GrassField extends AbstractWorldMap{
 
 
     void place(Grass grass) {//g
+            grass.addObserver(this);
             addToMap(grass.getPosition(),grass);
     }
 
     void cutGrass(Grass g)
     {
-        //removeFromMap(g.getPosition(),g);
         g.cut();
     }
 
     public Grass grassAt(Vector2d position){
         ArrayList<IMapElement> objctsAt = super.objectsAt(position);
-        IMapElement first = null;
 
         if(objctsAt != null)
         {

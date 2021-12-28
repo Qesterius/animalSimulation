@@ -17,6 +17,10 @@ import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class App extends Application {
@@ -37,6 +41,9 @@ public class App extends Application {
 
     private TextArea inspectorMap1;
     private TextArea inspectorMap2;
+
+    //ArrayList<XYChart.Series>  map1Charts = (ArrayList<XYChart.Series>) Arrays.asList(new XYChart.Series(),new XYChart.Series(),new XYChart.Series(),new XYChart.Series(),new XYChart.Series());
+    //ArrayList<XYChart.Series>  map2Charts = (ArrayList<XYChart.Series>) Arrays.asList(new XYChart.Series(),new XYChart.Series(),new XYChart.Series(),new XYChart.Series(),new XYChart.Series());
 
     XYChart.Series animalNumberSeries1 = new XYChart.Series();
     LineChart animalNumberChart1;
@@ -85,7 +92,6 @@ public class App extends Application {
         Vector2d newBorderSW = map.getBorderSW();
         borderNE = newBorderNE;
         borderSW = newBorderSW;
-
     }
     @Override
     public void start(Stage primaryStage) throws Exception {

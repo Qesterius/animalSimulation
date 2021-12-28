@@ -9,9 +9,9 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     protected Map<Vector2d, ArrayList<IMapElement>> objectsOnMap = new LinkedHashMap<>();
     protected Vector2d BorderNE;
     protected Vector2d BorderSW;
-    final private MapVisualizer visualizer; // to pole może być finalne i prywatne
+    final private MapVisualizer visualizer;
 
-    public AbstractWorldMap() {//??
+    public AbstractWorldMap() {
         visualizer = new MapVisualizer(this);
     }
 
@@ -46,12 +46,6 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     public boolean isOccupied(Vector2d position) {//?
-
-        /*for (Map.Entry<Vector2d, ArrayList<Animal>> x : animals.entrySet()) {
-            for ( Animal y: x.getValue()) {
-                if (y.getPosition().equals(position)) return true;
-            }
-        }*/
         return objectsOnMap.get(position) != null;
     }
 

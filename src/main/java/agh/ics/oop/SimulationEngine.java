@@ -56,10 +56,12 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
     @Override
     public void run() {
         running.set(true);
+        long lastUpdate;
 
         System.out.println("Thread started.");
         while(running.get())
         {
+                    lastUpdate = System.nanoTime();
                     if(!paused.get())
                     {
                         removedead();
@@ -76,12 +78,18 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
                         if(inspecting.get())
                             sendInspection();
                     }
+
+                    long deltaTime =  System.nanoTime()-lastUpdate;
+                    //System.out.println("delta: "+isMap1+" "+(moveDelay - deltaTime/(1000000)));
+                    //System.out.println("delta: "+isMap1+" "+(deltaTime));
+                    long sleeptime = (moveDelay- deltaTime/(1000000));
                     try {
-                        Thread.sleep(moveDelay);
+                        Thread.sleep(sleeptime > 0 ? sleeptime : 0);
                     } catch (InterruptedException e) {
                         System.out.println(e.getMessage());
                         return;
                     }
+
 
 
         }
@@ -94,14 +102,14 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
         if(animals.size() == 5)
         {
             magicCount+=1;
-            String animalsOut = "";
+            StringBuilder animalsOut = new StringBuilder();
             for (Animal a: new ArrayList<>(animals) ) {
                 Vector2d rand = map.randomEmptyPositionWithin();
 
                 if(rand!=null)
                 {
-                    animalsOut += "Animal at"+(rand.toString())+"\n";
-                    addAnimal(new Animal(map,rand,a.getGenotyp(),a.getEnergy(),day));
+                    animalsOut.append("Animal at").append(rand.toString()).append("\n");
+                    addAnimal(new Animal(map,rand,a.getGenotype(),a.getEnergy(),day));
                 }
             }
             renderer.sendMessage(isMap1,"Magic Happened\n New Animals emerged:\n" +animalsOut);
@@ -129,7 +137,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
             if(e.getClass() == Animal.class)
                 animals.remove(e);
             if(e.getClass() == Grass.class)
-                grassesPos.remove(((Grass) e).position);
+                grassesPos.remove(((Grass) e).getPosition());
         }
 
     }
@@ -180,19 +188,19 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
                 {
                     int lpenergy = (int) (parent1.getEnergy()*0.25);
                     parent1.setEnergy(parent1.getEnergy()-lpenergy);
-                    parent1.numberOfKids +=1;
+                    parent1.increaseNumberOfKids();
 
                     int rpenergy = (int) (parent2.getEnergy()*0.25);
                     parent2.setEnergy(parent2.getEnergy()-rpenergy);
-                    parent2.numberOfKids +=1;
+                    parent2.increaseNumberOfKids();
 
                     Animal dziecko = new Animal(map,
                                                 pos,
                                                 new Gene
                                                         (
-                                                                parent1.getGenotyp(),
+                                                                parent1.getGenotype(),
                                                                 parent1.getEnergy(),
-                                                                parent2.getGenotyp(),
+                                                                parent2.getGenotype(),
                                                                 parent2.getEnergy()
                                                         ),  lpenergy+rpenergy,day
                                                 );
@@ -225,7 +233,8 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
              {
                  Vector2d _empty = emptyJungleSlots.get(random.nextInt(emptyJungleSlots.size()));
                  grassesPos.add(_empty);
-                 map.place(new Grass(_empty));
+                 Grass _new = new Grass(_empty);
+                 map.place(_new);
              }
         //mapPlant
         ArrayList<Vector2d> emptyMapSlots = map.getEmptyMapSlots();
@@ -233,7 +242,8 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
             {
                 Vector2d _empty = emptyMapSlots.get(random.nextInt(emptyMapSlots.size()));
                 grassesPos.add(_empty);
-                map.place(new Grass(_empty));
+                Grass _new = new Grass(_empty);
+                map.place(_new);
             }
     }
 
@@ -268,7 +278,8 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
                     "Animal:"+inspected.getPosition()+"\n"+
                     "Number of direct children:"+directChildren+"\n"+
                     "Number of all children:"+childrenOfInspected.size()+"\n"+
-                    "Date of death"+ (inspected.deathDay== -1? "not yet :))" : inspected.deathDay)+"\n";
+                    "Date of death"+ (inspected.getDeathDay()== -1? "not yet :))" : inspected.getDeathDay())+"\n"+
+                    "Energy" +inspected.getEnergy()+"\n";
         renderer.sendInspection(isMap1, output);
     }
 
@@ -280,15 +291,15 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
         Double averageChildrenCount=0.0;
         for (Animal a: animals) {
             averageEnergy+= a.getEnergy();
-            averageChildrenCount+=a.numberOfKids;
-            if(dominantGenes.containsKey(a.getGenotyp()))
-                dominantGenes.put(a.getGenotyp(),dominantGenes.get(a.getGenotyp())+1);
+            averageChildrenCount+=a.getNumberOfKids();
+            if(dominantGenes.containsKey(a.getGenotype()))
+                dominantGenes.put(a.getGenotype(),dominantGenes.get(a.getGenotype())+1);
             else
-                dominantGenes.put(a.getGenotyp(),1);
+                dominantGenes.put(a.getGenotype(),1);
         }
         Double averageLifespan = 0.0;
         for (Animal d: deadAnimals) {
-            averageLifespan += d.deathDay - d.birthDay;
+            averageLifespan += d.getDeathDay() - d.getBirthDay();
         }
         int maxOcurrences =0;
         Gene dominantGene = null;
