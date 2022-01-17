@@ -51,7 +51,7 @@ public enum MapDirection {
     }
     public MapDirection previous(){
         return switch (this) {
-            case EAST -> NORTH_EAST;
+            case EAST -> NORTH_EAST;    // przy tej liczbie kierunków już się bardzo opłaca użyć values i ordinal
             case EAST_SOUTH -> EAST;
             case SOUTH -> EAST_SOUTH;
             case SOUTH_WEST -> SOUTH;
@@ -59,13 +59,13 @@ public enum MapDirection {
             case WEST_NORTH -> WEST;
             case NORTH -> WEST_NORTH;
             case NORTH_EAST -> NORTH;
-            default -> this;
+            default -> this;    // tylko wyjątek w takiej sytuacji
         };
     }
     public Vector2d toUnitVector()
     {
         return switch (this) {
-            case EAST -> new Vector2d(1, 0);
+            case EAST -> new Vector2d(1, 0);    // nowy wektor co wywołanie
             case EAST_SOUTH -> new Vector2d(1, -1);
             case SOUTH -> new Vector2d(0, -1);
             case SOUTH_WEST -> new Vector2d(-1, -1);

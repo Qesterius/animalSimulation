@@ -150,7 +150,7 @@ public class GrassField extends AbstractWorldMap{
 
 }
 
-class AnimalGrassComparator implements Comparator<IMapElement>{
+class AnimalGrassComparator implements Comparator<IMapElement>{ // MapElementComparator
 
     @Override
     public int compare(IMapElement o1, IMapElement o2) {

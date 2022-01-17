@@ -2,9 +2,9 @@ package agh.ics.oop;
 
 import java.util.*;
 
-public class Gene {
+public class Gene { // to raczej genotyp/genom niż gen
     private ArrayList<MoveDirection> geneCode;
-    private Random rand;
+    private Random rand; // static final
 
     @Override
     public boolean equals(Object o) {
@@ -48,12 +48,12 @@ public class Gene {
         if (tab.length!=32)
             throw new IllegalArgumentException("Incorrect argument size for Gene constructor");
 
-        geneCode.addAll(List.of(tab));
+        geneCode.addAll(List.of(tab));  // brak kontroli poprawności - wiemy tylko, że długość jest prawidłowa
         Collections.sort(geneCode);
         rand = new Random();
     }
 
-    public Gene(Gene anim1,int energy1, Gene anim2,int energy2)
+    public Gene(Gene anim1,int energy1, Gene anim2,int energy2) // nie lepiej przyjmować genotypy zamiast zwierząt?
     {
         geneCode = new ArrayList(32);
         rand = new Random();

@@ -3,7 +3,7 @@ package agh.ics.oop;
 import java.util.Locale;
 import java.util.ArrayList;
 
-public class OptionsParser {
+public class OptionsParser {    // to jest jeszcze gdzieś używane?
 
     public static MoveDirection[] parse(String[] args) throws IllegalArgumentException{
 

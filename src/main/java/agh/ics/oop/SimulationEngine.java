@@ -11,7 +11,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
     private ArrayList<Animal> deadAnimals = new ArrayList<Animal>();
     private ArrayList<Vector2d> grassesPos = new ArrayList<>();
 
-    public ArrayList<Animal> childrenOfInspected = new ArrayList<>();
+    public ArrayList<Animal> childrenOfInspected = new ArrayList<>();   // czy to na pewno zadanie dla silnika? skoro jest public, to chyba nie
     public Animal inspected;
     public int directChildren =0;
 
@@ -25,7 +25,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
 
     ///SETTINGS
     private int moveDelay =300;
-    int eatValue =1;
+    int eatValue =1;    // a tu nie powinno być jakiegoś modyfikatora dostępu?
     int minCoopulationEnergy = 5;
     int startingEnergy = 20;
     int moveEnergy;
@@ -186,7 +186,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
 
                 if( parent1.getEnergy() > minCoopulationEnergy && parent2.getEnergy()>minCoopulationEnergy)
                 {
-                    int lpenergy = (int) (parent1.getEnergy()*0.25);
+                    int lpenergy = (int) (parent1.getEnergy()*0.25);    // za miesiąc Pan będzie pamiętał, co oznacza ta nazwa?
                     parent1.setEnergy(parent1.getEnergy()-lpenergy);
                     parent1.increaseNumberOfKids();
 
@@ -194,7 +194,7 @@ public class SimulationEngine implements IEngine, Runnable, IPositionChangeObser
                     parent2.setEnergy(parent2.getEnergy()-rpenergy);
                     parent2.increaseNumberOfKids();
 
-                    Animal dziecko = new Animal(map,
+                    Animal dziecko = new Animal(map,    // polglish
                                                 pos,
                                                 new Gene
                                                         (

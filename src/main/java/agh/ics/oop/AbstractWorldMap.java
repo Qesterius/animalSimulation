@@ -11,20 +11,21 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     protected Vector2d BorderSW;
     final private MapVisualizer visualizer;
 
-    public AbstractWorldMap() {
+    public AbstractWorldMap() { // zostawia Pan ustawienie dwóch pól potomkom, nie wymuszając tego na nich
         visualizer = new MapVisualizer(this);
     }
 
-    void addToMap(Vector2d key, IMapElement e){//g
-        if(!objectsOnMap.containsKey(key))
+    void addToMap(Vector2d key, IMapElement e) {//g // co znaczy ten komentarz?
+        if (!objectsOnMap.containsKey(key))
             objectsOnMap.put(key, new ArrayList<>());
 
         objectsOnMap.get(key).add(e);
     }
-    void removeFromMap(Vector2d key, IMapElement e )//g
+
+    void removeFromMap(Vector2d key, IMapElement e)//g
     {
         objectsOnMap.get(key).remove(e);
-        if(objectsOnMap.get(key).size() == 0)
+        if (objectsOnMap.get(key).size() == 0)
             objectsOnMap.remove(key);
     }
 
@@ -32,16 +33,15 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         if (isPositionWithinMapBorders(animal.getPosition())) {
             animal.addObserver(this);
             addToMap(animal.getPosition(), animal);
-        }
-        else throw new IllegalArgumentException(animal.getPosition() + " is illegal starting point for animal");
+        } else throw new IllegalArgumentException(animal.getPosition() + " is illegal starting point for animal");
     }
 
-    public boolean isPositionWithinMapBorders(Vector2d pos){//g
+    public boolean isPositionWithinMapBorders(Vector2d pos) {//g
         return pos.lowerLeft(BorderNE).equals(pos)
                 && pos.upperRight(BorderSW).equals(pos);
     }
 
-    public Vector2d processPossibleMove(Vector2d from,Vector2d to) {//g
+    public Vector2d processPossibleMove(Vector2d from, Vector2d to) {//g
         return isPositionWithinMapBorders(to) ? to : from;
     }
 
@@ -60,10 +60,10 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition, IMapElement e) {
-        if(oldPosition!=null)
-            removeFromMap(oldPosition,e);
+        if (oldPosition != null)
+            removeFromMap(oldPosition, e);
 
-        if(newPosition!=null)
+        if (newPosition != null)
             addToMap(newPosition, e);
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         return new Vector2d(BorderSW);
     }
 
-    public java.util.Set<Vector2d> getKeySet(){
+    public java.util.Set<Vector2d> getKeySet() {
         return objectsOnMap.keySet();
     }
 }

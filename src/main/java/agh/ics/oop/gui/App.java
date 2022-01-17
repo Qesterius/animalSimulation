@@ -23,14 +23,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class App extends Application {
-    GrassField map1;
+public class App extends Application {  // ta klasa jest przerośnięta
+    GrassField map1;    // czemu nie private?
     GrassField map2;
     private ImageLoader imageLoader;
     private Vector2d borderSW = new Vector2d(0,0);
     private Vector2d borderNE = new Vector2d(0,0);
     private GridPane gridPane1;
-    private GridPane gridPane2;
+    private GridPane gridPane2; // przy większej liczbie map byłoby to nie do ogarnięcia
     private Scene scene;
     private SimulationEngine simulationEngine1;
     private SimulationEngine simulationEngine2;

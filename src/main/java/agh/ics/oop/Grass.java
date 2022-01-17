@@ -15,7 +15,7 @@ public class Grass implements IMapElement{//, Comparable<IMapElement>{
 
     public void cut()
     {
-        for (IPositionChangeObserver o: observers) {
+        for (IPositionChangeObserver o: observers) {    // lepiej by użyć dedykowanego observer'a, bo usunięcie z mapy, to nie jest zmiana pozycji
             o.positionChanged(position,null, this);
         }
 
